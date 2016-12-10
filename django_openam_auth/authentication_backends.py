@@ -27,13 +27,14 @@ class OpenAMJSONBackend(object):
     def authenticate(self, username=None, password=None):
 
         oam = openam.OpenAM(OPENAM_ENDPOINT)
+        username = username.lower()
 
         try:
             token = oam.authenticate(username, password)
             attrs = oam.attributes(token)
             user, _ = user_model.objects.get_or_create(username=username)
-            user.is_staff = True
-            user.is_superuser = True
+            user.is_staff = False
+            user.is_superuser = False
 
             # update Django user attrs
             for oam_att, django_att in OPENAM_DJANGO_ATTRIBUTES_MAP:
@@ -48,6 +49,7 @@ class OpenAMJSONBackend(object):
 
 
     def get_user(self, username):
+        username = username.lower()
         try:
             return user_model.objects.get(pk=username)
         except user_model.DoesNotExist:
