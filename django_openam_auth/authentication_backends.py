@@ -27,6 +27,7 @@ class OpenAMJSONBackend(object):
     def authenticate(self, username=None, password=None):
 
         oam = openam.OpenAM(OPENAM_ENDPOINT)
+        username = username.lower()
 
         try:
             token = oam.authenticate(username, password)
@@ -47,6 +48,10 @@ class OpenAMJSONBackend(object):
 
     def get_user(self, username):
         try:
-            return user_model.objects.get(pk=username)
+            username_lower = username.lower()
+        except AttributeError:
+            username_lower = username
+        try:
+            return user_model.objects.get(pk=username_lower)
         except user_model.DoesNotExist:
             return None
