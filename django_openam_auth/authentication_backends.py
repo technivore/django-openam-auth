@@ -32,8 +32,6 @@ class OpenAMJSONBackend(object):
             token = oam.authenticate(username, password)
             attrs = oam.attributes(token)
             user, _ = user_model.objects.get_or_create(username=username)
-            user.is_staff = True
-            user.is_superuser = True
 
             # update Django user attrs
             for oam_att, django_att in OPENAM_DJANGO_ATTRIBUTES_MAP:
