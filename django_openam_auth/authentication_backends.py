@@ -6,7 +6,12 @@ import openam
 try:
     OPENAM_ENDPOINT = settings.OPENAM_ENDPOINT
 except AttributeError:
-    raise ImproperlyConfigured("You must set OPENAM_ENDPOINT in the applications's settings")
+    raise ImproperlyConfigured("You must set OPENAM_ENDPOINT in the application's settings")
+
+try:
+    session_header_name = settings.OPENAM_SESSION_HEADER_NAME
+except AttributeError:
+    raise ImproperlyConfigured("You must set OPENAM_SESSION_HEADER_NAME in the application's settings")
 
 user_model = get_user_model()
 
@@ -26,7 +31,8 @@ class OpenAMJSONBackend(object):
 
     def authenticate(self, username=None, password=None):
 
-        oam = openam.OpenAM(OPENAM_ENDPOINT)
+        oam = openam.OpenAM(OPENAM_ENDPOINT,
+                session_header_name=session_header_name)
         username = username.lower()
 
         try:
