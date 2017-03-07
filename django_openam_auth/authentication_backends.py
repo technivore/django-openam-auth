@@ -31,14 +31,17 @@ class OpenAMJSONBackend(object):
 
         try:
             token = oam.authenticate(username, password)
-            attrs = oam.attributes(token)
+            attrs = oam.attributes(token, username)
+
             user, _ = user_model.objects.get_or_create(username=username)
 
             # update Django user attrs
             for oam_att, django_att in OPENAM_DJANGO_ATTRIBUTES_MAP:
-                if hasattr(user, django_att) and attrs.attributes.get(oam_att, None):
-                    val = attrs.attributes.get(oam_att)
-                    setattr(user, django_att, val[0])
+                if hasattr(user, django_att) and attrs.get(oam_att, None):
+                    val = attrs.get(oam_att)
+                    if not isinstance(val, basestring):
+                        val = val[0]
+                    setattr(user, django_att, val)
 
             user.save()
             return user
