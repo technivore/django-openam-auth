@@ -51,7 +51,7 @@ class OpenAMJSONBackend(object):
 
             user.save()
             return user
-        except openam.AuthenticationFailure:
+        except (openam.AuthenticationFailure, openam.OpenAMError) as e:
             return None
 
 
